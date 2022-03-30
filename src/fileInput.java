@@ -11,7 +11,7 @@ public class fileInput {
 		String[] props = getPropertiesFromConfigFile();
 		Connection c = getConnection(props);
 		setAutoCommit(c, true);
-		dynamicReader.createTable(props[3], props[4], c, Integer.parseInt(props[5]));
+		dynamicReader.createTable(props[3], props[4], c);
 	}
 
 	public static Connection getConnection(String[] props) {
@@ -41,7 +41,7 @@ public class fileInput {
 	}
 
 	public static String[] getPropertiesFromConfigFile() {
-		String[] props = new String[6];
+		String[] props = new String[5];
 		Properties prop = new Properties();
 		String fileName = "config.cfg";
 		try (FileInputStream fis = new FileInputStream(fileName)) {
@@ -56,7 +56,7 @@ public class fileInput {
 		props[2] = prop.getProperty("pass");
 		props[3] = prop.getProperty("absoluteFilePath");
 		props[4] = prop.getProperty("databaseName");
-		props[5] = prop.getProperty("tenYoN");
+		
 
 		return props;
 	}
