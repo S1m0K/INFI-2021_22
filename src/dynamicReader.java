@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -17,10 +18,8 @@ public class dynamicReader {
 
 			String[][] fieldNamesAndDatatypes = readFirstTenLinesAndHeader(s, tableName, c);
 
-			// insertIntoTableFirstLines();
 			inserIntoTable(tableName, s, fieldNamesAndDatatypes, c);
-			// select data from table
-			// *2 because assignment
+			selectAllFromTable(tableName, c, fieldNamesAndDatatypes);
 			s.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -44,7 +43,7 @@ public class dynamicReader {
 			l = l.trim();
 			String[] splittedL = l.split(";");
 			firstLines.add(splittedL);
-//			System.out.println(firstLines.toString());
+			//			System.out.println(firstLines.toString());
 			// reads first ten lines and stores them
 			amount++;
 		}
@@ -122,7 +121,7 @@ public class dynamicReader {
 						}
 						if (!foreverFalseInt) {
 							datatypeInt = true;
-//						System.out.println("thats an int: " +c);
+							//						System.out.println("thats an int: " +c);
 						}
 
 					}
@@ -134,7 +133,6 @@ public class dynamicReader {
 					foreverFalseDouble = true;
 					// System.out.println("not an int or double or ','!: " + c);
 				}
-				
 
 			}
 			// finds out if datatype should date
@@ -224,7 +222,11 @@ public class dynamicReader {
 						Date da = Date.valueOf(nL[i]);
 						stmt.setDate(i + 1, da);
 					} else if (fNaDt[1][i].contains("boolean")) {
-						stmt.setBoolean(i + 1, Boolean.getBoolean(nL[i]));
+						if (nL[i].contains("true")) {
+							stmt.setInt(i + 1, 1);
+						} else {
+							stmt.setInt(i + 1, 0);
+						}
 					} else {
 						System.out.println("Vagaggt");
 					}
@@ -274,7 +276,11 @@ public class dynamicReader {
 						Date da = Date.valueOf(nL[i]);
 						stmt.setDate(i + 1, da);
 					} else if (fNaDt[1][i].contains("boolean")) {
-						stmt.setBoolean(i + 1, Boolean.getBoolean(nL[i]));
+						if (nL[i].contains("true")) {
+							stmt.setInt(i + 1, 1);
+						} else {
+							stmt.setInt(i + 1, 0);
+						}
 					} else {
 						System.out.println("Vagaggt");
 					}
@@ -285,5 +291,52 @@ public class dynamicReader {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static void selectAllFromTable(String tableName, Connection c, String[][] fNaDt) {
+		try {
+			Statement stmt = c.createStatement();
+			String sql = "select tableID";
+			for (int i = 0; i < fNaDt[0].length; i++) {
+				sql = sql + ", " + fNaDt[0][i];
+			}
+			sql = sql + " from " + tableName + ";";
+			System.out.println(sql);
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				for (int i = 0; i < fNaDt[1].length; i++) {
+					if (fNaDt[1][i].contains("char")) {
+						String ch = rs.getString(fNaDt[0][i]);
+						System.out.print(ch + "\t");
+					} else if (fNaDt[1][i].contains("varchar")) {
+						String s = rs.getString(fNaDt[0][i]);
+						System.out.print(s + "\t\t");
+					} else if (fNaDt[1][i].contains("double")) {
+						Double d = rs.getDouble(fNaDt[0][i]);
+						System.out.print(d + "\t");
+					} else if (fNaDt[1][i].contains("int")) {
+						int z = rs.getInt(fNaDt[0][i]);
+						System.out.print(z + "\t");
+					} else if (fNaDt[1][i].contains("date")) {
+						Date da = rs.getDate(fNaDt[0][i]);
+						System.out.print(da + "\t");
+					} else if (fNaDt[1][i].contains("boolean")) {
+						int b = rs.getInt(fNaDt[0][i]);
+						if (b == 1) {
+							System.out.print("true" + "\t");
+						} else {
+							System.out.print("false" + "\t");
+						}
+
+					}
+				}
+				System.out.println();
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 	}
 }
