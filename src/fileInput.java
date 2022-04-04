@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class fileInput {
 	public static void main(String[] args) {
-		String[] props = getPropertiesFromConfigFile();
+		String[] props = getPropertiesFromConfigFile(args[0]);
 		Connection c = getConnection(props);
 		setAutoCommit(c, true);
 		dynamicReader.createTable(props[3], props[4], c);
@@ -40,10 +40,11 @@ public class fileInput {
 
 	}
 
-	public static String[] getPropertiesFromConfigFile() {
+	public static String[] getPropertiesFromConfigFile(String configFileName) {
 		String[] props = new String[5];
 		Properties prop = new Properties();
 		String fileName = "config.cfg";
+		//String fileName = configFileName;
 		try (FileInputStream fis = new FileInputStream(fileName)) {
 			prop.load(fis);
 		} catch (FileNotFoundException ex) {

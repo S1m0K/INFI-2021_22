@@ -15,7 +15,6 @@ public class dynamicReader {
 		try {
 			File f = new File(csvInputFilePath);
 			Scanner s = new Scanner(f);
-
 			String[][] fieldNamesAndDatatypes = readFirstTenLinesAndHeader(s, tableName, c);
 
 			inserIntoTable(tableName, s, fieldNamesAndDatatypes, c);
@@ -71,7 +70,7 @@ public class dynamicReader {
 		fNaDt[1] = datatypes;
 
 		for (int i = 0; i < fNaDt[1].length; i++) {
-			System.out.println(fNaDt[1][i]);
+			//System.out.println(fNaDt[1][i]);
 		}
 		try {
 			String sql = createSQL(fNaDt, tableName);
@@ -228,7 +227,7 @@ public class dynamicReader {
 							stmt.setInt(i + 1, 0);
 						}
 					} else {
-						System.out.println("Vagaggt");
+						System.out.println("Bad");
 					}
 				}
 				stmt.executeUpdate();
@@ -282,7 +281,7 @@ public class dynamicReader {
 							stmt.setInt(i + 1, 0);
 						}
 					} else {
-						System.out.println("Vagaggt");
+						System.out.println("Bad2");
 					}
 				}
 				stmt.executeUpdate();
@@ -301,7 +300,7 @@ public class dynamicReader {
 				sql = sql + ", " + fNaDt[0][i];
 			}
 			sql = sql + " from " + tableName + ";";
-			System.out.println(sql);
+			//System.out.println(sql);
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				for (int i = 0; i < fNaDt[1].length; i++) {
